@@ -11,6 +11,7 @@ export default function Home() {
   const [interimText, setInterimText] = useState('...');
   const [originalText, setOriginalText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
+  const [transcript, setTranscript] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [summary, setSummary] = useState('Summary will appear here...');
   const [loadingSummary, setLoadingSummary] = useState(false);
@@ -102,13 +103,17 @@ export default function Home() {
 
     try {
       const res = await fetch(`https://103.181.243.180/transcriber/${endpoint}`, {
+      // const res = await fetch(`http://localhost:8000${endpoint}`, {
+
         method: 'POST',
         body: formData,
       });
       const text = await res.text();
       try {
         const json = JSON.parse(text);
+        setTranscript(json.transcript || 'No transcript available.');
         setSummary(json.summary || '✅ Summary received, but empty.');
+
       } catch {
         setSummary(text);
       }
@@ -160,14 +165,28 @@ export default function Home() {
       {activeTab === 'summarizer' && (
         <div className="flex flex-col gap-4">
           <div className="flex gap-2">
-            <input type="file" accept="video/*,audio/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="border p-2" />
-            <button onClick={summarizeFile} className="bg-blue-600 text-white px-4 py-2 rounded">Summarize</button>
+            <input
+              type="file"
+              accept="video/*,audio/*"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="border p-2"
+            />
+            <button onClick={summarizeFile} className="bg-blue-600 text-white px-4 py-2 rounded">
+              Summarize
+            </button>
           </div>
+
           {loadingSummary && <div className="loader self-center" />}
+
           <div className="border p-4 rounded bg-gray-100 whitespace-pre-wrap">
-            {summary}
+            <h2 className="font-semibold mb-2 text-blue-600">📝 Transcript:</h2>
+            <p className="mb-4">{transcript}</p>
+
+            <h2 className="font-semibold mb-2 text-green-600">📌 Summary:</h2>
+            <p>{summary}</p>
           </div>
         </div>
+
       )}
     </main>
   );
