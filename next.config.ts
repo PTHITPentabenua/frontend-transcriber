@@ -1,7 +1,6 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/transcriber-app',
-  // You can also add other options here
+  trailingSlash: true,  // ← This is the fix
 };
 
 export default nextConfig;
