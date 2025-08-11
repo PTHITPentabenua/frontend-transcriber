@@ -44,7 +44,7 @@ export default function Home() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: selectedMic } });
       streamRef.current = stream;
-      const socket = new WebSocket(`ws://localhost:8000/ws/transcribe/${sourceLang}/${targetLang}`);
+      const socket = new WebSocket(`wss://103.181.243.180/transcriber/ws/transcribe/${sourceLang}/${targetLang}`);
       socketRef.current = socket;
 
       socket.onopen = () => {
@@ -90,7 +90,6 @@ export default function Home() {
   const summarizeFromText = async (textToSummarize: string) => {
     if (!textToSummarize.trim()) {
         setSummary('No speech was detected to summarize.');
-        setActiveTab('summarizer');
         return;
     }
 
@@ -99,7 +98,7 @@ export default function Home() {
     setSummary('⏳ Generating summary from live session...');
 
     try {
-      const res = await fetch(`http://localhost:8000/summarize-text/`, {
+      const res = await fetch(`https://103.181.243.180/transcriber/summarize-text/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +144,7 @@ export default function Home() {
 
     try {
       // Tambahkan bahasa target sebagai query parameter
-      const res = await fetch(`http://localhost:8000${endpoint}?target_lang=${targetLang}`, {
+      const res = await fetch(`https://103.181.243.180/transcriber/${endpoint}?target_lang=${targetLang}`, {
         method: 'POST',
         body: formData,
       });
